@@ -28,18 +28,21 @@ jobs:
 
       # 4️⃣ Install dependencies
       - name: Install Composer dependencies
-        run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+        working-directory: contact-form
 
       - name: Install NPM dependencies
         run: npm ci
+        working-directory: contact-form
 
       # 5️⃣ Build frontend (Vite)
       - name: Build frontend assets
         run: npm run build
+        working-directory: contact-form
 
       # 6️⃣ Zip the project (exclude unnecessary files)
       - name: Package for deployment
-        run: zip -r deploy.zip . -x "*.git*" "node_modules/*" ".env" "storage/*"
+        run: zip -r deploy.zip contact-form -x "*.git*" "contact-form/node_modules/*" "contact-form/.env" "contact-form/storage/*"
 
       # 7️⃣ Setup SSH to server
       - name: Setup SSH
@@ -55,5 +58,6 @@ jobs:
             cd /home/${{ secrets.SERVER_USERNAME }}/web/evanac.team2lesgo.site/public_html &&
             unzip -o /home/${{ secrets.SERVER_USERNAME }}/deploy.zip &&
             rm /home/${{ secrets.SERVER_USERNAME }}/deploy.zip &&
+            cd contact-form &&
             php artisan optimize
           "
